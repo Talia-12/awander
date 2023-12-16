@@ -1,6 +1,6 @@
-use std::{error::Error, fs::File, io::Read, path::Path};
+use std::{error::Error, fs::File, io::{Read, Write}, path::Path};
 
-use csv::Reader;
+use csv::{Reader, Writer};
 
 use crate::entries::WordEntry;
 
@@ -35,6 +35,27 @@ pub fn read_words<R: Read>(mut reader: Reader<R>) -> Result<Vec<WordEntry>, Box<
 	}
 
 	Ok(entries)
+}
+
+pub fn file_csv_writer<P: AsRef<Path>>(path: P) ->  Result<Writer<File>, Box<dyn Error>> {
+	let file = File::open(path)?;
+	let writer = csv::Writer::from_writer(file);
+	Ok(writer)
+}
+
+pub fn write_words<W: Write>(words: &Vec<WordEntry>, writer: &mut Writer<W>) -> Result<(), Box<dyn Error>> {
+	writer.write_record(&["SYMPHAN WORD","ENGLISH WORD","PoS","DEFINITIONS"])?;
+
+	for word in words {
+		writer.write_record(&[
+			word.conlang_word.to_string(),
+			word.origlang_word.to_string(),
+			word.part_of_speech.to_string(),
+			word.definition.to_string()
+		])?;
+	}
+
+	Ok(())
 }
 
 #[cfg(test)]
@@ -74,5 +95,21 @@ SYMPHAN WORD,ENGLISH WORD,PoS
 (+1)(+5)(+3),when,Adverb";
 
 		assert_eq!(read_words(string_reader(failing_input)).unwrap_err().to_string(), "Must have columns for conlang word, original language word, part of speech, and definition.".to_string());
+	}
+
+	#[test]
+	fn test_write_words() {
+		let words = vec![
+			WordEntry::new_str("A", "B", "C", ""),
+			WordEntry::new_str("D", "E", "F", "G"),
+			WordEntry::new_str("H", "I", "J", ""),
+		];
+
+		let mut wtr = Writer::from_writer(vec![]);
+
+		write_words(&words,  &mut wtr).unwrap();
+
+    let data = String::from_utf8(wtr.into_inner().unwrap()).unwrap();
+    assert_eq!(data, "SYMPHAN WORD,ENGLISH WORD,PoS,DEFINITIONS\nA,B,C,\nD,E,F,G\nH,I,J,\n");
 	}
 }

@@ -2,10 +2,10 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct WordEntry {
-	conlang_word: String,
-	origlang_word: String,
-	part_of_speech: String,
-	definition: String
+	pub conlang_word: String,
+	pub origlang_word: String,
+	pub part_of_speech: String,
+	pub definition: String
 }
 
 impl WordEntry {
