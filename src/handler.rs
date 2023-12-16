@@ -1,5 +1,5 @@
 use crate::app::{App, AppResult};
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers, KeyEventKind};
 
 /// Handles the key events and updates the state of [`App`].
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
@@ -15,10 +15,10 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
 			}
 		}
 		// Counter handlers
-		KeyCode::Right => {
+		KeyCode::Right => if key_event.kind == KeyEventKind::Press {
 			app.increment_counter();
 		}
-		KeyCode::Left => {
+		KeyCode::Left => if key_event.kind == KeyEventKind::Press {
 			app.decrement_counter();
 		}
 		// Other handlers you could add here.

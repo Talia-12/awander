@@ -12,3 +12,9 @@ pub mod tui;
 
 /// Event handler.
 pub mod handler;
+
+/// File loader.
+pub mod loader;
+
+/// Word Entries.
+pub mod entries;
