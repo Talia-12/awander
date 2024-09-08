@@ -17,6 +17,8 @@ fn main() -> AppResult<()> {
 	let mut tui = Tui::new(terminal, events);
 	tui.init()?;
 
+	println!("asdf");
+
 	// Start the main loop.
 	while app.running {
 		// Render the user interface.
